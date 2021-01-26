@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CreateRestaurantDto } from "./dtos/create-restaurant.dto";
 import { Restaurant } from "./entities/restaurant.entity";
 
 @Injectable()
@@ -11,5 +12,9 @@ export class RestaurantService {
   ) {}
   getAll(): Promise<Restaurant[]> {
     return this.restaurants.find(); // 위와 같이 설정하면 restaurants 를 사용해서 모든 repository의 옵션들을 사용할 수 있음.
+  }
+  createRestaurant(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
+    const newRestaurant = this.restaurants.create(createRestaurantDto);
+    return this.restaurants.save(newRestaurant);
   }
 }
