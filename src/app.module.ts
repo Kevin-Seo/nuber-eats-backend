@@ -9,7 +9,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    ConfigModule.forRoot({ // Config 정의
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
@@ -22,16 +22,16 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
         DB_NAME: Joi.string().required(),
       })
     }),
-    TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot({ // DB 정의
       type: "postgres",
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      logging: true,
       synchronize: process.env.NODE_ENV !== 'prod', // prod 상태에서는 DB 를 재구성하지 않도록 설정
-      entities: [Restaurant]
+      logging: process.env.NODE_ENV !== 'prod',
+      entities: [Restaurant] // DB 스키마 나열
     }),
     GraphQLModule.forRoot({
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
