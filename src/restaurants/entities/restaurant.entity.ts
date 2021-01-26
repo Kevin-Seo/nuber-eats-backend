@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { IsBoolean, IsString, Length } from "class-validator";
+import { IsBoolean, IsOptional, IsString, Length } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType() // 자동으로 스키마를 빌드하기 위해 사용하는 GraphQL decorator
@@ -15,25 +15,16 @@ export class Restaurant {
   @Length(5)
   name: String;
 
-  @Field(type => Boolean)
-  @Column()
+  @Field(type => Boolean, {nullable: true})
+  @Column({default: true})
+  @IsOptional()
   @IsBoolean()
   isVegan: Boolean;
 
-  @Field(type => String)
+  @Field(type => String, {defaultValue: 'Gangnam'})
   @Column()
   @IsString()
   address: String;
-
-  @Field(type => String)
-  @Column()
-  @IsString()
-  ownerName: String;
-
-  @Field(type => String)
-  @Column()
-  @IsString()
-  categoryName: String;
 }
 
 // Ref. https://typeorm.io/#/active-record-data-mapper
