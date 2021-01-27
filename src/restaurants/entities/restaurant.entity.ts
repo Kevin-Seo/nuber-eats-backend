@@ -7,24 +7,27 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export class Restaurant {
   @Field(type => Number)
   @PrimaryGeneratedColumn()
-  id: Number;
+  id: number;
+  // Ref. https://feel5ny.github.io/2017/11/17/Typescript_04/
+  // number vs. Number 그리고 string vs. String 등, wrapper class(interface) 와 primitive 타입 구분할 줄 알기
+  // typescript 에서는 주로 소문자를 권장한다!
 
   @Field(type => String) // For GraphQL
   @Column() // For TypeORM
   @IsString()
   @Length(5)
-  name: String;
+  name: string;
 
   @Field(type => Boolean, {nullable: true})
   @Column({default: true})
   @IsOptional()
   @IsBoolean()
-  isVegan: Boolean;
+  isVegan: boolean;
 
   @Field(type => String, {defaultValue: 'Gangnam'})
   @Column()
   @IsString()
-  address: String;
+  address: string;
 }
 
 // Ref. https://typeorm.io/#/active-record-data-mapper
