@@ -43,4 +43,4 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
   providers: [],
 })
 export class AppModule {}
-// AppModule 은 main.ts 로 import 되는 유일한 모듈
+// AppModule 은 main.ts 로 import 되는 유일한 모듈
