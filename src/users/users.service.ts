@@ -17,6 +17,7 @@ export class UsersService {
         return { ok: false, error: 'There is a user with that email already.' };
       }
       await this.users.save(this.users.create({ email, password, role }));
+      // create 는 인스턴스만 만들고 DB 에 저장하지는 않는다. save 까지 해야 DB 에 저장된다.
       return { ok: true };
     } catch (e) {
       return { ok: false, error: 'Couldn\'t create account'};
