@@ -4,6 +4,7 @@ import { CoreEntity } from "src/common/entities/core.entity";
 import { BeforeInsert, Column, Entity } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
+import { IsEmail, IsEnum } from "class-validator";
 
 // TypeScript Enum 타입 만들기
 enum UserRole {
@@ -21,6 +22,7 @@ registerEnumType(UserRole, { name: 'UserRole' });
 export class User extends CoreEntity {
   @Column()
   @Field(type => String)
+  @IsEmail()
   email: string;
 
   @Column()
@@ -31,6 +33,7 @@ export class User extends CoreEntity {
     { type: 'enum', enum: UserRole }
   )
   @Field(type => UserRole)
+  @IsEnum(UserRole)
   role: UserRole;
 
   // TypeORM Listener : https://typeorm.io/#/listeners-and-subscribers/beforeinsert
