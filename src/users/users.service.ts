@@ -12,12 +12,9 @@ import { JwtService } from "src/jwt/jwt.service";
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
-    private readonly config: ConfigService,
+    // private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-  ) {
-    console.log(this.config.get('SECRET_KEY'));
-    this.jwtService.hello();
-  }
+  ) {}
 
   async createAccount({email, password, role}: CreateAccountInput): Promise<{ok: boolean, error?: string}> {
     try {
@@ -52,7 +49,8 @@ export class UsersService {
         };
       }
       // const token = jwt.sign({id: user.id}, process.env.SECRET_KEY);
-      const token = jwt.sign({id: user.id, password: user.password}, this.config.get('SECRET_KEY'));
+      // const token = jwt.sign({id: user.id, password: user.password}, this.config.get('SECRET_KEY'));
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
         token,
