@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 // Joi 는 Javascript 로 이루어진 패키지다. Javascript로 이루어진 패키지를 첨부할때는 아래와 같이 해야한다. (export 되어있지 않아서?)
 import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
+// import { JwtMiddleware } from './jwt/jwt.middleware';
+import { jwtMiddleware } from './jwt/jwt.middleware';
 
 @Module({
   imports: [
@@ -49,5 +51,14 @@ import { JwtModule } from './jwt/jwt.module';
   controllers: [],
   providers: [],
 })
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     // consumer.apply(JwtMiddleware).forRoutes({
+//     consumer.apply(jwtMiddleware).forRoutes({
+//       path: "/graphql",
+//       method: RequestMethod.ALL,
+//     });
+//   }
+// }
 export class AppModule {}
 // AppModule 은 main.ts 로 import 되는 유일한 모듈
