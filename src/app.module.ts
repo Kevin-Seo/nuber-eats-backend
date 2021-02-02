@@ -8,8 +8,7 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
-// import { JwtMiddleware } from './jwt/jwt.middleware';
-import { jwtMiddleware } from './jwt/jwt.middleware';
+import { JwtMiddleware } from './jwt/jwt.middleware';
 
 @Module({
   imports: [
@@ -51,14 +50,13 @@ import { jwtMiddleware } from './jwt/jwt.middleware';
   controllers: [],
   providers: [],
 })
-// export class AppModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     // consumer.apply(JwtMiddleware).forRoutes({
-//     consumer.apply(jwtMiddleware).forRoutes({
-//       path: "/graphql",
-//       method: RequestMethod.ALL,
-//     });
-//   }
-// }
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: "/graphql",
+      method: RequestMethod.ALL,
+    });
+  }
+}
+// export class AppModule {}
 // AppModule 은 main.ts 로 import 되는 유일한 모듈

@@ -18,4 +18,8 @@ export class JwtService {
     // forRoot 로 가져온 CONFIG_OPTIONS 값을 여기에 options로 가져온 것은 이런 방법도 있다는 것을 보여주기 위함이다.
     // 이미 ConfigService 가 Global Module 이기 때문에 위처럼 바로 ConfigService.get 하면 가져올 수 있다.
   }
+
+  verify(token: string) {
+    return jwt.verify(token, this.options.privateKey);
+  }
 }
