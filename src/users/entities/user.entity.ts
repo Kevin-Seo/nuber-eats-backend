@@ -38,7 +38,7 @@ export class User extends CoreEntity {
 
   // TypeORM Listener : https://typeorm.io/#/listeners-and-subscribers/beforeinsert
   @BeforeInsert()
-  @BeforeUpdate() // BeforeUpdate를 해도 현재상태에서는 아래 항수를 타지 않음. 다음강의(#5.15)에서 알아본다.
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, 10);
