@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { type } from "os";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsEmail, IsEnum } from "class-validator";
@@ -38,6 +38,7 @@ export class User extends CoreEntity {
 
   // TypeORM Listener : https://typeorm.io/#/listeners-and-subscribers/beforeinsert
   @BeforeInsert()
+  @BeforeUpdate() // BeforeUpdate를 해도 현재상태에서는 아래 항수를 타지 않음. 다음강의(#5.15)에서 알아본다.
   async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, 10);
