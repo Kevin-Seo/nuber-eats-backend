@@ -36,6 +36,10 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field(type => Boolean)
+  verified: boolean;
+
   // TypeORM Listener : https://typeorm.io/#/listeners-and-subscribers/beforeinsert
   @BeforeInsert()
   @BeforeUpdate()
