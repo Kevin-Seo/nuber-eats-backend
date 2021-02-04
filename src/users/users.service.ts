@@ -7,11 +7,13 @@ import { User } from "./entities/user.entity";
 import { JwtService } from "src/jwt/jwt.service";
 import { UserProfileInput } from "./dtos/user-profile.dto";
 import { EditProfileInput } from "./dtos/edit-profile.dto";
+import { Verification } from "./entities/verfication.entity";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification) private readonly verifications: Repository<Verification>,
     // private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
@@ -22,8 +24,14 @@ export class UsersService {
       if (exists) {
         return { ok: false, error: 'There is a user with that email already.' };
       }
-      await this.users.save(this.users.create({ email, password, role }));
+      const user = await this.users.save(this.users.create({ email, password, role }));
       // create 는 인스턴스만 만들고 DB 에 저장하지는 않는다. save 까지 해야 DB 에 저장된다.
+
+      await this.verifications.save(this.verifications.create({
+        // code: 12121212,
+        user
+      }))
+
       return { ok: true };
     } catch (e) {
       return { ok: false, error: 'Couldn\'t create account'};
@@ -70,7 +78,11 @@ export class UsersService {
 
   async editProfile(userId: number, {email, password}: EditProfileInput): Promise<User> {
     const user = await this.users.findOne(userId);
-    if (email) user.email = email;
+    if (email) {
+      user.email = email;
+      user.verified = false;
+      await this.verifications.save(this.verifications.create({ user }));
+    }
     if (password) user.password = password;
     return this.users.save(user);
   }
