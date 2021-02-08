@@ -25,7 +25,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field(type => String)
   password: string;
   
@@ -44,12 +44,14 @@ export class User extends CoreEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-      // 강의에서 npm i @types/bcrypt --dev-only 해주는데, 그걸 해야 vscode 에서 hash 함수 설명(F12)이 뜨는 것 같다.
-    } catch (e) {
-      console.log(e);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+        // 강의에서 npm i @types/bcrypt --dev-only 해주는데, 그걸 해야 vscode 에서 hash 함수 설명(F12)이 뜨는 것 같다.
+      } catch (e) {
+        console.log(e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

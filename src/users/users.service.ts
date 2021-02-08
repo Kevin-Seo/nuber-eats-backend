@@ -42,7 +42,7 @@ export class UsersService {
 
   async login({ email, password }: LoginInput): Promise<{ok: boolean, error?: string, token?: string}> {
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOne({ email }, { select: ['id', 'password']});
       if (!user) {
         return {
           ok: false,
@@ -56,6 +56,7 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
+      console.log(user);
       // const token = jwt.sign({id: user.id}, process.env.SECRET_KEY);
       // const token = jwt.sign({id: user.id, password: user.password}, this.config.get('SECRET_KEY'));
       const token = this.jwtService.sign(user.id);
@@ -88,16 +89,22 @@ export class UsersService {
   }
 
   async verifyEmail(code: string): Promise<boolean> {
-    const verification = await this.verifications.findOne(
-      { code },
-      { relations: ['user'] }, // User정보를 통째로 가져오기
-    );
-    if (verification) {
-      // console.log(verification);
-      verification.user.verified = true;
-      this.users.save(verification.user);
+    try {
+      const verification = await this.verifications.findOne(
+        { code },
+        { relations: ['user'] }, // User정보를 통째로 가져오기
+      );
+      if (verification) {
+        // console.log(verification);
+        verification.user.verified = true;
+        console.log(verification.user);
+        this.users.save(verification.user);
+        return true;
+      } 
+      throw new Error();
+    } catch (e) {
+      console.log(e);
+      return false;
     }
-
-    return false;
   }
 }
