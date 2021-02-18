@@ -11,19 +11,17 @@ export class MailService {
     private readonly options: MailModuleOptions,
     // private readonly configService: ConfigService,
   ) {
-    this.sendEmail('testing', 'test content')
-        .then(_ => console.log('message sent...'))
-        .catch(error => console.log(error));
+    this.sendEmail('testing', 'test');
   }
 
   private async sendEmail(subject: string, content: string) {
     const form = new FormData();
-    form.append('from', `Excited User <mailgun@${this.options.domain}}>`);
-    form.append('to', `keviny.seo@gmail.com`);
+    form.append('from', `Excited User <mailgun@${this.options.domain}>`);
+    form.append('to', `${this.options.fromEmail}`);
     form.append('subject', subject);
     form.append('text', content);
 
-    const response = await got(`https://api.mailgun.net/v3/${this.options.domain}}/messages`, {
+    const response = await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
