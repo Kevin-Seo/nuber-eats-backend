@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { JwtService } from "src/jwt/jwt.service";
 import { MailService } from "src/mail/mail.service";
+import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { Verification } from "./entities/verfication.entity";
 import { UsersService } from "./users.service";
@@ -21,9 +22,11 @@ const mockMailService = {
   sendVerificationEmail: jest.fn(),
 }
 
-describe('UserService', () => {
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
+describe('UserService', () => {
   let service: UsersService;
+  let usersRepository: MockRepository<User>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -44,13 +47,18 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
+    usersRepository = module.get(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it.todo('createAccount');
+  it.todo('createAccount', () => {
+    it('should fail if user exist', () => {
+      
+    });
+  });
   it.todo('login');
   it.todo('findById');
   it.todo('editProfile');
