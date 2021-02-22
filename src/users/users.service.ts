@@ -9,6 +9,7 @@ import { UserProfileInput, UserProfileOutput } from "./dtos/user-profile.dto";
 import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
 import { Verification } from "./entities/verfication.entity";
 import { VerifiyEmailOutput } from "./dtos/verify-email.dto";
+import { MailService } from "src/mail/mail.service";
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,7 @@ export class UsersService {
     @InjectRepository(Verification) private readonly verifications: Repository<Verification>,
     // private readonly config: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async createAccount({email, password, role}: CreateAccountInput): Promise<CreateAccountOutput> {
@@ -28,10 +30,11 @@ export class UsersService {
       const user = await this.users.save(this.users.create({ email, password, role }));
       // create 는 인스턴스만 만들고 DB 에 저장하지는 않는다. save 까지 해야 DB 에 저장된다.
 
-      await this.verifications.save(this.verifications.create({
-        // code: 12121212,
+      const verification = await this.verifications.save(this.verifications.create({
         user
-      }))
+      }));
+
+      this.mailService.sendVerificationEmail(user.email, verification.code);
 
       return { ok: true };
     } catch (e) {
@@ -94,7 +97,8 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
-        await this.verifications.save(this.verifications.create({ user }));
+        const verification = await this.verifications.save(this.verifications.create({ user }));
+        this.mailService.sendVerificationEmail(user.email, verification.code);
       }
       if (password) user.password = password;
       await this.users.save(user);
