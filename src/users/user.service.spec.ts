@@ -7,11 +7,11 @@ import { User } from "./entities/user.entity";
 import { Verification } from "./entities/verfication.entity";
 import { UsersService } from "./users.service";
 
-const mockRepository = {
+const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
-}
+}); // returns { ~ } 와 같다.
 
 const mockJwtService = {
   sign: jest.fn(),
@@ -33,10 +33,10 @@ describe('UserService', () => {
       providers: [UsersService, {
         // mock 은 가짜라는 의미. Test 에 필요한 가짜 Repository 와 Service 를 만들어서 provide 해준다.
         provide: getRepositoryToken(User),
-        useValue: mockRepository,
+        useValue: mockRepository(),
       }, {
         provide: getRepositoryToken(Verification),
-        useValue: mockRepository,
+        useValue: mockRepository(),
       }, {
         provide: JwtService,
         useValue: mockJwtService,
@@ -55,20 +55,32 @@ describe('UserService', () => {
   });
 
   describe('createAccount', () => {
+    const createAccountArgs = {
+      email: '',
+      password: '',
+      role: 0,
+    };
+
     it('should fail if user exist', async () => {
       usersRepository.findOne.mockResolvedValue({
         id: 1,
         email: 'asdklfjalksdjf',
       });
-      const result = await service.createAccount({
-        email: '',
-        password: '',
-        role: 0,
-      });
+      const result = await service.createAccount(createAccountArgs);
       expect(result).toMatchObject({
         ok: false,
         error: 'There is a user with that email already.',
       });
+    });
+
+    it('should create a new user', async () => {
+      usersRepository.findOne.mockResolvedValue(undefined);
+      usersRepository.create.mockReturnValue(createAccountArgs);
+      await service.createAccount(createAccountArgs);
+      expect(usersRepository.create).toHaveBeenCalledTimes(1);
+      expect(usersRepository.create).toHaveBeenCalledWith(createAccountArgs);
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith(createAccountArgs);
     });
   });
   it.todo('login');
