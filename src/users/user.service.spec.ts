@@ -14,7 +14,7 @@ const mockRepository = () => ({
 }); // returns { ~ } 와 같다.
 
 const mockJwtService = {
-  sign: jest.fn(),
+  sign: jest.fn(() => 'signed-token-baby'),
   verify: jest.fn(),
 }
 
@@ -29,8 +29,9 @@ describe('UserService', () => {
   let usersRepository: MockRepository<User>;
   let verificationsRepository: MockRepository<Verification>;
   let mailService: MailService;
+  let jwtService: JwtService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [UsersService, {
         // mock 은 가짜라는 의미. Test 에 필요한 가짜 Repository 와 Service 를 만들어서 provide 해준다.
@@ -50,6 +51,7 @@ describe('UserService', () => {
 
     service = module.get<UsersService>(UsersService);
     mailService = module.get<MailService>(MailService);
+    jwtService = module.get<JwtService>(JwtService);
     usersRepository = module.get(getRepositoryToken(User));
     verificationsRepository = module.get(getRepositoryToken(Verification));
   });
@@ -143,6 +145,33 @@ describe('UserService', () => {
         ok: false,
         error: 'User not found',
       });
+    });
+
+    it('should fail if the password is wrong', async () => {
+      const mockedUser = {
+        checkPassword: jest.fn().mockResolvedValue(false),
+      };
+      usersRepository.findOne.mockResolvedValue(mockedUser);
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({
+        ok: false,
+        error: 'Wrong password',
+      });
+    });
+
+    it('should return token if password correct', async () => {
+      const mockedUser = {
+        id: 1,
+        checkPassword: jest.fn().mockResolvedValue(true),
+      };
+      usersRepository.findOne.mockResolvedValue(mockedUser);
+      const result = await service.login(loginArgs);
+      expect(jwtService.sign).toHaveBeenCalledTimes(1);
+      expect(jwtService.sign).toHaveBeenCalledWith(expect.any(Number));
+      expect(result).toEqual({
+        ok: true,
+        token: 'signed-token-baby',
+      })
     });
   });
   it.todo('findById');
