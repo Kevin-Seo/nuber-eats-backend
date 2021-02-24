@@ -72,22 +72,20 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error
+        error: "Can't log user in.",
       }
     }
   }
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({ id });
-      if (user) {
-        return {
-          ok: true,
-          user: user,
-        };
-      }
+      const user = await this.users.findOneOrFail({ id });
+      return {
+        ok: true,
+        user: user,
+      };
     } catch (error) {
-      return { ok: false, error: 'User Not Found'}
+      return { ok: false, error: 'User Not Found'};
     }
   }
 
