@@ -117,7 +117,7 @@ export class UsersService {
       if (verification) {
         // console.log(verification);
         verification.user.verified = true;
-        console.log(verification.user);
+        // console.log(verification.user);
         await this.users.save(verification.user);
         await this.verifications.delete(verification.id);
         return { ok: true };
