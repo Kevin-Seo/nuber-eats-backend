@@ -14,7 +14,7 @@ export class MailService {
     // this.sendEmail('testing', 'test');
   }
 
-  private async sendEmail(subject: string, to: string, template: string, emailVars: EmailVar[]) {
+  async sendEmail(subject: string, to: string, template: string, emailVars: EmailVar[]) {
     const form = new FormData();
     form.append('from', `Nico from Nuber Eats <mailgun@${this.options.domain}>`);
     form.append('to', 'keviny.seo@gmail.com'); // 원래는 to 파라미터를 사용해야 하지만, 테스트로 무조건 내 계정으로 쏜다.
