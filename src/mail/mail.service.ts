@@ -14,7 +14,7 @@ export class MailService {
     // this.sendEmail('testing', 'test');
   }
 
-  async sendEmail(subject: string, to: string, template: string, emailVars: EmailVar[]) {
+  async sendEmail(subject: string, to: string, template: string, emailVars: EmailVar[]): Promise<boolean> {
     const form = new FormData();
     form.append('from', `Nico from Nuber Eats <mailgun@${this.options.domain}>`);
     form.append('to', 'keviny.seo@gmail.com'); // 원래는 to 파라미터를 사용해야 하지만, 테스트로 무조건 내 계정으로 쏜다.
@@ -23,15 +23,15 @@ export class MailService {
     emailVars.forEach(eVar => form.append(`v:${eVar.key}`, eVar.value));
 
     try {
-      const response = await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
-        method: 'POST',
+      const response = await got.post(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
         headers: {
           Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
         },
         body: form,
       });
+      return true;
     } catch (e) {
-      console.log(e)
+      return false;
     }
   }
 
