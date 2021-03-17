@@ -10,6 +10,8 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verfication.entity';
 import { MailModule } from './mail/mail.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Category } from './restaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -39,7 +41,7 @@ import { MailModule } from './mail/mail.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod', // prod 상태에서는 DB 를 재구성하지 않도록 설정
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification] // DB 스키마 나열
+      entities: [User, Verification, Restaurant, Category] // DB 스키마 나열
     }),
     GraphQLModule.forRoot({
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
