@@ -1,9 +1,10 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { IsString, Length } from "class-validator";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Restaurant } from "./restaurant.entity";
 
+@InputType('CategoryInputType', { isAbstract: true })
 @ObjectType() // 자동으로 스키마를 빌드하기 위해 사용하는 GraphQL decorator
 @Entity() // TypeORM 이 DB 에 아래 내용을 저장하게 해주는 decorator
 export class Category extends CoreEntity {

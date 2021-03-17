@@ -1,10 +1,10 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { type } from "os";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
+import { Restaurant } from "src/restaurants/entities/restaurant.entity";
 
 // TypeScript Enum 타입 만들기
 enum UserRole {
@@ -16,7 +16,9 @@ enum UserRole {
 // GraphQL 에 Enum 만들기
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType({ isAbstract: true })
+// InputType과 ObjectType 이 같은 이름을 사용하게 되면 에러가 발생하므로, InputType의 이름을 지정해서 해결해준다.
+// 이렇게되면 GraphQL Playground 의 Schema 에 UserInputType, User 가 따로 생기게 된다.
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
@@ -41,6 +43,10 @@ export class User extends CoreEntity {
   @Field(type => Boolean)
   @IsBoolean()
   verified: boolean;
+
+  @Field(type => [Restaurant])
+  @OneToMany(type => Restaurant, restaurant => restaurant.owner)
+  restaurants: Restaurant[];
 
   // TypeORM Listener : https://typeorm.io/#/listeners-and-subscribers/beforeinsert
   @BeforeInsert()
