@@ -1,41 +1,20 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { CreateRestaurantDto } from "./dtos/create-restaurant.dto";
-import { UpdateResaurantDto } from "./dtos/update-restaurant.dto";
+import { AuthUser } from "src/auth/auth-user.decorator";
+import { User } from "src/users/entities/user.entity";
+import { CreateRestaurantOutput } from "./dtos/create-restaurant.dto";
+import { CreateRestaurantInput } from "./dtos/create-restaurant.dto";
 import { Restaurant } from "./entities/restaurant.entity";
 import { RestaurantService } from "./restaurants.service";
 
 @Resolver(of => Restaurant) // Graphql 쿼리를 사용하는 Resolver.
 export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {} // Resolver 는 Service와 연결되어 있고,
-  
-  @Query(returns => [Restaurant])
-  restaurants(): Promise<Restaurant[]> {
-    return this.restaurantService.getAll(); // 이 Service는 내부에서 DB 에 접근한다.
-  }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => CreateRestaurantOutput)
   async createRestaurant(
-    @Args('input') createRestaurantDto: CreateRestaurantDto,
-  ): Promise<Boolean> {
-    try {
-      await this.restaurantService.createRestaurant(createRestaurantDto);
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
-  }
-
-  @Mutation(returns => Boolean)
-  async updateRestaurant(
-    @Args('input') updateRestaurantDto: UpdateResaurantDto,
-  ): Promise<Boolean> {
-    try {
-      await this.restaurantService.updateRestaurant(updateRestaurantDto);
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
+    @AuthUser() authUser: User,
+    @Args('input') createRestaurantInput: CreateRestaurantInput,
+  ): Promise<CreateRestaurantOutput> {
+    return this.restaurantService.createRestaurant(authUser, createRestaurantInput);
   }
 }
