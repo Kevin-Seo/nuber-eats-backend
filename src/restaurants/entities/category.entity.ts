@@ -9,15 +9,20 @@ import { Restaurant } from "./restaurant.entity";
 @Entity() // TypeORM 이 DB 에 아래 내용을 저장하게 해주는 decorator
 export class Category extends CoreEntity {
   @Field(type => String) // For GraphQL
-  @Column() // For TypeORM
+  @Column({ unique: true }) // For TypeORM
   @IsString()
   @Length(5)
   name: string;
 
-  @Field(type => String)
-  @Column()
+  @Field(type => String, { nullable: true })
+  @Column({ nullable: true })
   @IsString()
   coverImg: string;
+
+  @Field(type => String)
+  @Column({ unique: true })
+  @IsString()
+  slug: string;
 
   @Field(type => [Restaurant])
   @OneToMany(type => Restaurant, restaurant => restaurant.category)
