@@ -7,10 +7,10 @@ import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
 
 // TypeScript Enum 타입 만들기
-enum UserRole {
-  Client,
-  Owner,
-  Delivery,
+export enum UserRole {
+  Client = 'CLIENT',
+  Owner = 'OWNER',
+  Delivery = 'DELIVERY',
 }
 
 // GraphQL 에 Enum 만들기
