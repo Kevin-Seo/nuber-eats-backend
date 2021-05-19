@@ -18,6 +18,8 @@ export class JwtMiddleware implements NestMiddleware {
           const { user, ok } = await this.userService.findById(decoded['id']);
           if (ok) {
             req['user'] = user;
+            // 이건 HTTP 의 Request Context 에 삽입한 과정
+            // GraphQL 에서 활용하려면 GraphQL 모듈 import 시에 context 옵션 추가해야함! (app.module.ts 참조)
           }
         }
       } catch (e) {

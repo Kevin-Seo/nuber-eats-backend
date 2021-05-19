@@ -48,6 +48,8 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       autoSchemaFile: true,
       context: ({ req }) => ({ user: req['user'] }),
+      // https://github.com/apollographql/apollo-server#context
+      // HTTP Request Context 를 GraphQL Context 로 옮겨주는 과정
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
