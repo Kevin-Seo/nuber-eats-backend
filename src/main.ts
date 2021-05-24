@@ -9,6 +9,6 @@ async function bootstrap() {
     new ValidationPipe()
   )
   // app.use(jwtMiddleware); // functional middleware 만 가능
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();
